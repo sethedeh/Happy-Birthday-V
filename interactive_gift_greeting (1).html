@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Sweet 16 Vivian! ✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tone.js for Web Audio Synthesized Sounds -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Pacifico&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap');
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle at center, #fbcfe8 0%, #f472b6 45%, #be185d 100%);
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+
+        .font-jakarta {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Float animation for pointer sign */
+        @keyframes float-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-14px) scale(1.05); }
+        }
+
+        .animate-float {
+            animation: float-bounce 2s ease-in-out infinite;
+        }
+
+        /* Pulsing glow for the indicator */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(244, 114, 182, 0.7), 0 0 35px rgba(251, 207, 232, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(244, 114, 182, 0.95), 0 0 55px rgba(251, 207, 232, 0.8); }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Gift box 3D hover & tap effects */
+        .gift-box {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.08) rotate(-2deg);
+        }
+
+        .gift-box:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes box-shake {
+            0% { transform: rotate(0deg) scale(1); }
+            15% { transform: rotate(-10deg) scale(1.12); }
+            30% { transform: rotate(10deg) scale(1.12); }
+            45% { transform: rotate(-8deg) scale(1.08); }
+            60% { transform: rotate(8deg) scale(1.08); }
+            75% { transform: rotate(-4deg) scale(1.04); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        .animate-box-shake {
+            animation: box-shake 0.75s ease-in-out;
+        }
+
+        /* Floating background items */
+        .floating-bg-item {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.4;
+            animation: float-bg 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes float-bg {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-45px) rotate(20deg); }
+        }
+
+        /* Text Glow Effect */
+        .text-glow {
+            text-shadow: 0 0 12px #ffffff, 0 0 24px #f472b6, 0 0 36px #be185d;
+        }
+
+        /* Custom Scrollbar for message if needed on tiny screens */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #f472b6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden text-slate-800">
+
+    <div id="bg-decorations" class="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <div class="floating-bg-item text-5xl top-10 left-8" style="animation-delay: 0s;">👑</div>
+        <div class="floating-bg-item text-4xl top-1/4 right-10" style="animation-delay: 1s;">✨</div>
+        <div class="floating-bg-item text-5xl bottom-20 left-12" style="animation-delay: 2s;">🎀</div>
+        <div class="floating-bg-item text-6xl bottom-10 right-14" style="animation-delay: 3s;">💖</div>
+        <div class="floating-bg-item text-4xl top-12 right-1/3" style="animation-delay: 1.5s;">🎂</div>
+        <div class="floating-bg-item text-5xl bottom-1/3 left-1/4" style="animation-delay: 2.5s;">🎮</div>
+    </div>
+
+    <canvas id="effects-canvas" class="fixed inset-0 pointer-events-none z-20"></canvas>
+
+    <main class="relative z-10 flex flex-col items-center justify-center p-4 w-full max-w-xl text-center">
+
+        <!-- Initial Unopened State Container -->
+        <div id="gift-stage" class="flex flex-col items-center transition-all duration-700 transform scale-100 opacity-100">
+
+            <!-- Pointer Sign -->
+            <div id="pointer-sign" class="animate-float mb-6 relative flex flex-col items-center">
+                <div class="bg-white/95 backdrop-blur-md px-7 py-3 rounded-full shadow-2xl border-2 border-pink-300 flex items-center gap-2 pulse-glow">
+                    <span class="text-pink-600 font-bold text-lg md:text-xl tracking-wide">✨ TAP THE BOX VIVIAN! ✨</span>
+                </div>
+                <!-- Bouncing Arrow Down Icon -->
+                <div class="text-white drop-shadow-md mt-2 animate-bounce">
+                    <i data-lucide="arrow-down-big" class="w-10 h-10 fill-pink-500 text-white"></i>
+                </div>
+            </div>
+
+            <!-- Pink Gift Box Wrapper with Gold Ribbon -->
+            <div id="gift-box" class="gift-box relative group p-4" onclick="openGift()">
+                <!-- Aura Glow behind box -->
+                <div class="absolute inset-0 bg-pink-300/60 rounded-full blur-3xl group-hover:bg-pink-200/80 transition-all"></div>
+
+                <!-- Box Graphic (SVG) -->
+                <div class="relative w-64 h-64 md:w-72 md:h-72 drop-shadow-2xl">
+                    <svg viewBox="0 0 200 200" class="w-full h-full">
+                        <!-- Shadow base -->
+                        <ellipse cx="100" cy="185" rx="75" ry="12" fill="#881337" opacity="0.25"/>
+
+                        <!-- Box Body -->
+                        <rect x="30" y="80" width="140" height="100" rx="14" fill="#f472b6" stroke="#be185d" stroke-width="4"/>
+                        <!-- Gold Ribbon Vertical on Box Body -->
+                        <rect x="85" y="80" width="30" height="100" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+                        <!-- Sparkles on body ribbon -->
+                        <circle cx="100" cy="110" r="2" fill="#ffffff" opacity="0.8"/>
+                        <circle cx="100" cy="150" r="2" fill="#ffffff" opacity="0.8"/>
+
+                        <!-- Box Lid Shadow -->
+                        <rect x="22" y="78" width="156" height="10" rx="4" fill="#881337" opacity="0.25"/>
+
+                        <!-- Box Lid -->
+                        <g id="box-lid">
+                            <rect x="20" y="50" width="160" height="32" rx="8" fill="#f472b6" stroke="#be185d" stroke-width="4"/>
+                            <!-- Gold Ribbon Vertical on Lid -->
+                            <rect x="85" y="50" width="30" height="32" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+                            
+                            <!-- Gold Bow Loops -->
+                            <!-- Left Loop -->
+                            <path d="M70,50 C35,15 35,38 85,50 Z" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+                            <!-- Right Loop -->
+                            <path d="M130,50 C165,15 165,38 115,50 Z" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+                            <!-- Center Bow Knot -->
+                            <circle cx="100" cy="50" r="12" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+                            <circle cx="100" cy="50" r="6" fill="#fef08a"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <p class="text-white/90 text-sm font-medium mt-4 backdrop-blur-sm bg-black/15 px-4 py-1.5 rounded-full shadow-inner">
+                🔊 Sound on for your surprise!
+            </p>
+        </div>
+
+        <div id="reveal-stage" class="hidden flex-col items-center justify-center transition-all duration-1000 transform scale-50 opacity-0 my-auto w-full">
+            
+            <!-- Frosted Glass Card Container -->
+            <div class="bg-white/95 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl border-4 border-pink-200 relative w-full text-center overflow-hidden">
+                
+                <!-- Floating Decorative Embellishments -->
+                <div class="absolute -top-3 -left-3 text-4xl transform -rotate-12">🎀</div>
+                <div class="absolute -top-3 -right-3 text-4xl transform rotate-12">👑</div>
+                <div class="absolute -bottom-3 -left-3 text-4xl transform rotate-12">🥳</div>
+                <div class="absolute -bottom-3 -right-3 text-4xl transform -rotate-12">✨</div>
+
+                <!-- Sweet 16 Badge Tag -->
+                <div class="inline-flex items-center gap-1.5 px-4 py-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-full text-xs md:text-sm font-bold uppercase tracking-wider mb-3 shadow-md">
+                    <span>👑 Sweet 16 Celebration 👑</span>
+                </div>
+
+                <!-- Main Heading: Happy Birthday Vivian ! -->
+                <h1 id="greeting-title" class="text-3xl sm:text-4xl md:text-5xl font-pacifico text-pink-600 text-glow leading-tight mb-4">
+                    Happy Birthday Vivian !
+                </h1>
+
+                <!-- Personalized Role Tags / Badges -->
+                <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 my-4">
+                    <span class="px-3 py-1 bg-pink-100 border border-pink-300 text-pink-700 text-xs sm:text-sm font-bold rounded-full shadow-sm">🎮 Roblox Partner</span>
+                    <span class="px-3 py-1 bg-purple-100 border border-purple-300 text-purple-700 text-xs sm:text-sm font-bold rounded-full shadow-sm">📞 5-Hour Caller</span>
+                    <span class="px-3 py-1 bg-rose-100 border border-rose-300 text-rose-700 text-xs sm:text-sm font-bold rounded-full shadow-sm">🗣️ Rant Partner</span>
+                    <span class="px-3 py-1 bg-amber-100 border border-amber-300 text-amber-800 text-xs sm:text-sm font-bold rounded-full shadow-sm">🇳🇬 Igbo Teacher</span>
+                    <span class="px-3 py-1 bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs sm:text-sm font-bold rounded-full shadow-sm">✨ Bundle of Joy</span>
+                    <span class="px-3 py-1 bg-fuchsia-100 border border-fuchsia-300 text-fuchsia-700 text-xs sm:text-sm font-bold rounded-full shadow-sm">😂 Worst Known Laugh Ever</span>
+                    <span class="px-3 py-1 bg-pink-200 border border-pink-400 text-pink-800 text-xs sm:text-sm font-extrabold rounded-full shadow-sm">💕 Best Friend</span>
+                </div>
+
+                <!-- Customized Message Body -->
+                <div class="bg-pink-50/70 border border-pink-200/80 rounded-2xl p-4 sm:p-5 mt-4 shadow-inner">
+                    <p id="greeting-message" class="text-slate-800 text-base sm:text-lg md:text-xl font-medium leading-relaxed font-jakarta">
+                        Love you so much , your my favorite roblox partner/ 5 hours caller / rant partner / igbo teacher / bundle of joy / worst know laugh ever / best friend . happy sweet 16
+                    </p>
+                </div>
+
+                <!-- Interactive Re-play Action -->
+                <div class="mt-6 flex items-center justify-center gap-3">
+                    <button onclick="popMoreConfetti()" class="px-6 py-3 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:from-pink-600 hover:to-amber-600 text-white font-bold rounded-full shadow-xl active:scale-95 transition-all transform flex items-center gap-2 text-sm sm:text-base">
+                        <span>Pop More Ribbons & Confetti!</span> 🎊
+                    </button>
+                </div>
+            </div>
+
+            <!-- Wrap Up Again Button -->
+            <button onclick="resetGift()" class="mt-5 text-white/85 hover:text-white underline text-xs sm:text-sm flex items-center gap-1.5 transition font-medium">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Re-wrap gift box
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Application State
+        let isOpened = false;
+        let audioSynth = null;
+
+        // Initialize Audio using Tone.js
+        function initAudio() {
+            if (!audioSynth) {
+                audioSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.005, decay: 0.15, sustain: 0.3, release: 1.2 }
+                }).toDestination();
+                audioSynth.volume.value = -5;
+            }
+        }
+
+        // Celebratory melodic tune for Vivian
+        function playCelebrationSound() {
+            try {
+                Tone.start();
+                initAudio();
+                
+                const now = Tone.now();
+                // Upbeat celebratory chord sequence
+                audioSynth.triggerAttackRelease("C5", "8n", now);
+                audioSynth.triggerAttackRelease("E5", "8n", now + 0.12);
+                audioSynth.triggerAttackRelease("G5", "8n", now + 0.24);
+                audioSynth.triggerAttackRelease("B5", "8n", now + 0.36);
+                audioSynth.triggerAttackRelease("C6", "4n", now + 0.48);
+            } catch (e) {
+                console.log("Audio play allowed after gesture interaction");
+            }
+        }
+
+        function openGift() {
+            if (isOpened) return;
+            isOpened = true;
+
+            const box = document.getElementById('gift-box');
+            const giftStage = document.getElementById('gift-stage');
+            const revealStage = document.getElementById('reveal-stage');
+
+            // Trigger wiggle/shake animation
+            box.classList.add('animate-box-shake');
+
+            // Play jingle sound
+            playCelebrationSound();
+
+            setTimeout(() => {
+                // Trigger full screen ribbons and confetti burst
+                triggerBigExplosion();
+
+                // Hide initial stage smoothly
+                giftStage.classList.add('scale-50', 'opacity-0');
+                
+                setTimeout(() => {
+                    giftStage.classList.add('hidden');
+                    
+                    // Show reveal card stage
+                    revealStage.classList.remove('hidden');
+                    
+                    // Trigger reflow to initialize smooth transition
+                    void revealStage.offsetWidth;
+                    
+                    revealStage.classList.remove('scale-50', 'opacity-0');
+                    revealStage.classList.add('scale-100', 'opacity-100');
+
+                    // Start continuous background floating balloons
+                    startFloatingBalloons();
+                }, 400);
+
+            }, 450);
+        }
+
+        function triggerBigExplosion() {
+            const count = 220;
+            const defaults = {
+                origin: { y: 0.65 }
+            };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            // High velocity color blast
+            fire(0.25, {
+                spread: 30,
+                startVelocity: 60,
+                colors: ['#f472b6', '#be185d', '#facc15', '#a855f7', '#38bdf8', '#ffffff']
+            });
+
+            // Streamer ribbon squares
+            fire(0.2, {
+                spread: 70,
+                shapes: ['square'],
+                colors: ['#fef08a', '#f472b6', '#ffffff']
+            });
+
+            // High aerial burst
+            fire(0.35, {
+                spread: 110,
+                decay: 0.91,
+                scalar: 1.2
+            });
+
+            // Slow floating glitter
+            fire(0.1, {
+                spread: 130,
+                startVelocity: 25,
+                decay: 0.92,
+                scalar: 1.5,
+                colors: ['#ffd700', '#ff69b4', '#e0e7ff']
+            });
+
+            // Double cannons from left and right sides
+            setTimeout(() => {
+                confetti({
+                    particleCount: 65,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.7 }
+                });
+                confetti({
+                    particleCount: 65,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.7 }
+                });
+            }, 300);
+        }
+
+        // Extra ribbon pop on button click
+        function popMoreConfetti() {
+            playCelebrationSound();
+            confetti({
+                particleCount: 90,
+                spread: 80,
+                origin: { y: 0.7 },
+                colors: ['#f472b6', '#be185d', '#facc15', '#38bdf8', '#c084fc']
+            });
+        }
+
+        // Re-wrap box to initial state
+        function resetGift() {
+            isOpened = false;
+            const giftStage = document.getElementById('gift-stage');
+            const revealStage = document.getElementById('reveal-stage');
+            const box = document.getElementById('gift-box');
+
+            box.classList.remove('animate-box-shake');
+
+            revealStage.classList.remove('scale-100', 'opacity-100');
+            revealStage.classList.add('scale-50', 'opacity-0');
+
+            setTimeout(() => {
+                revealStage.classList.add('hidden');
+                giftStage.classList.remove('hidden');
+                
+                void giftStage.offsetWidth;
+                
+                giftStage.classList.remove('scale-50', 'opacity-0');
+                giftStage.classList.add('scale-100', 'opacity-100');
+            }, 400);
+        }
+
+        const canvas = document.getElementById('effects-canvas');
+        const ctx = canvas.getContext('2d');
+        let balloons = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class FloatingBalloon {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 120;
+                this.radius = 16 + Math.random() * 18;
+                this.speed = 1 + Math.random() * 1.6;
+                this.color = ['#f472b6', '#be185d', '#c084fc', '#facc15', '#38bdf8'][Math.floor(Math.random() * 5)];
+                this.angle = Math.random() * Math.PI * 2;
+                this.swingSpeed = 0.02 + Math.random() * 0.02;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.angle += this.swingSpeed;
+                this.x += Math.sin(this.angle) * 0.9;
+
+                if (this.y < -60) {
+                    this.y = canvas.height + 60;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = 0.55;
+                ctx.fill();
+
+                // Balloon String
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.radius);
+                ctx.lineTo(this.x + Math.sin(this.angle) * 6, this.y + this.radius + 28);
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = 0.35;
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function startFloatingBalloons() {
+            if (balloons.length === 0) {
+                for (let i = 0; i < 22; i++) {
+                    balloons.push(new FloatingBalloon());
+                }
+                animateBalloons();
+            }
+        }
+
+        function animateBalloons() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (isOpened) {
+                balloons.forEach(b => {
+                    b.update();
+                    b.draw();
+                });
+            }
+            requestAnimationFrame(animateBalloons);
+        }
+    </script>
+</body>
+</html>
