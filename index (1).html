@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff0f4">
+<title>Vivian's Sweet 16 🎀</title>
+<style>
+  :root {
+    --pink: #f4a9bd;
+    --pink-dark: #d96d91;
+    --blush: #fff0f4;
+    --cream: #fffdf9;
+    --ink: #654858;
+    --muted: #9b7b8a;
+    --glass: rgba(255,255,255,.72);
+    --shadow: 0 20px 60px rgba(180, 105, 133, .15);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--ink);
+    font-family: "Nunito", "Avenir Next", Avenir, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at 12% 14%, rgba(255,255,255,.95), transparent 28rem),
+      radial-gradient(circle at 90% 28%, rgba(255,205,220,.62), transparent 27rem),
+      linear-gradient(135deg, #fffafb 0%, #ffe6ed 52%, #fff5ed 100%);
+  }
+  button { font: inherit; }
+  .ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(2px); opacity: .5; animation: drift 11s ease-in-out infinite alternate; }
+  .orb.one { width: 180px; height: 180px; background: #ffd1df; top: 12%; left: -55px; }
+  .orb.two { width: 240px; height: 240px; background: #fff8e9; right: -90px; bottom: 7%; animation-delay: -4s; }
+  .orb.three { width: 100px; height: 100px; background: #f9c6d5; right: 18%; top: 8%; animation-delay: -7s; }
+  @keyframes drift { to { transform: translate(24px, -25px) scale(1.08); } }
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+  .screen { position: relative; z-index: 1; min-height: 100vh; display: grid; place-items: center; padding: 28px 18px; }
+  .intro-card {
+    width: min(100%, 510px); text-align: center; padding: clamp(28px, 6vw, 48px);
+    border: 1px solid rgba(255,255,255,.92); border-radius: 30px;
+    background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    box-shadow: var(--shadow); animation: arrive .8s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes arrive { from { opacity: 0; transform: translateY(22px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .eyebrow { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 999px; color: var(--pink-dark); background: #fff0f4; font-size: .76rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+  .gift-wrap { width: 112px; height: 112px; display: grid; place-items: center; margin: 24px auto 20px; border-radius: 32px; background: linear-gradient(145deg, #fff5f7, #ffd8e4); box-shadow: inset 0 2px 0 #fff, 0 12px 28px rgba(217,109,145,.17); animation: bob 2.5s ease-in-out infinite; }
+  .gift { font-size: 3.8rem; filter: drop-shadow(0 5px 3px rgba(150,75,100,.14)); }
+  @keyframes bob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
+  h1,h2,h3,p { margin-top: 0; }
+  .intro-card h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1.12; letter-spacing: -.045em; margin-bottom: 13px; }
+  .intro-card .subtitle { color: var(--muted); line-height: 1.65; margin: 0 auto 26px; max-width: 330px; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .btn { border: 0; border-radius: 999px; padding: 14px 22px; cursor: pointer; font-weight: 800; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+  .btn:hover { transform: translateY(-3px); }
+  .btn:active { transform: translateY(0) scale(.98); }
+  .btn-primary { color: white; background: linear-gradient(135deg, #f29db6, #d96d91); box-shadow: 0 10px 24px rgba(217,109,145,.28); }
+  .btn-primary:hover { box-shadow: 0 14px 28px rgba(217,109,145,.36); }
+  .btn-soft { color: #a06f83; background: #fff; border: 1px solid #f8dce5; }
+  .btn-soft:hover { background: #fff7f9; }
+  .tiny-note { font-size: .78rem; color: #b08c9b; margin: 22px 0 0; }
+  .sad-cat { width: min(100%, 250px); height: 185px; object-fit: cover; border-radius: 20px; margin: 8px auto 20px; display: block; background: #fff0f4; }
+  .hidden { display: none !important; }
+  #birthday { display: none; width: 100%; max-width: 980px; margin: 0 auto; animation: arrive .8s cubic-bezier(.2,.8,.2,1) both; }
+  #birthday.visible { display: block; }
+  .hero { text-align: center; padding: 28px 8px 20px; position: relative; }
+  .hero h1 { font-size: clamp(2.25rem, 7.2vw, 4.8rem); line-height: 1.03; letter-spacing: -.06em; margin: 18px 0 14px; color: #b9587b; text-shadow: 0 0 24px rgba(255,255,255,.9), 0 4px 25px rgba(217,109,145,.2); }
+  .hero h1 .name { color: #d66e92; }
+  .sweet-badge { display: inline-block; padding: 9px 16px; border-radius: 999px; background: rgba(255,255,255,.78); border: 1px solid white; color: #bd6887; font-weight: 800; box-shadow: 0 8px 25px rgba(185,88,123,.1); }
+  .hero-note { color: #a47c8d; margin: 18px auto 0; max-width: 470px; line-height: 1.65; }
+  .message-card, .closing-card { border: 1px solid rgba(255,255,255,.95); background: rgba(255,255,255,.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 26px; box-shadow: var(--shadow); }
+  .message-card { max-width: 740px; margin: 16px auto 34px; padding: 26px clamp(20px, 5vw, 40px); text-align: center; }
+  .message-card .quote-mark { font-size: 2.5rem; color: #f0a1b8; line-height: 1; }
+  .message-card p { font-size: clamp(1.1rem, 3vw, 1.45rem); line-height: 1.65; margin: 7px 0 0; font-weight: 700; }
+  .section-heading { text-align: center; margin: 38px 0 20px; }
+  .section-heading h2 { font-size: clamp(1.5rem, 4vw, 2.1rem); letter-spacing: -.035em; margin-bottom: 8px; }
+  .section-heading p { color: var(--muted); margin-bottom: 0; font-size: .95rem; }
+  .cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .flip-card { min-height: 220px; perspective: 1000px; cursor: pointer; outline: none; }
+  .flip-inner { height: 100%; min-height: 220px; position: relative; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2,.75,.25,1); }
+  .flip-card.flipped .flip-inner, .flip-card:focus-visible .flip-inner { transform: rotateY(180deg); }
+  .flip-face { position: absolute; inset: 0; padding: 24px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-radius: 23px; border: 1px solid rgba(255,255,255,.96); backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 12px 30px rgba(180,105,133,.11); }
+  .flip-front { background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(255,239,244,.82)); }
+  .flip-back { transform: rotateY(180deg); background: linear-gradient(145deg, #fff9fb, #ffe3ec); }
+  .role-icon { width: 65px; height: 65px; display: grid; place-items: center; border-radius: 22px; font-size: 2rem; background: white; box-shadow: 0 8px 20px rgba(217,109,145,.12); margin-bottom: 15px; }
+  .flip-face h3 { font-size: 1.05rem; line-height: 1.25; margin-bottom: 8px; }
+  .flip-face p { color: var(--muted); font-size: .9rem; line-height: 1.5; margin-bottom: 0; }
+  .tap-hint { margin-top: 14px; color: #c18ca0; font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .flip-back.emoji-only { padding: 18px; }
+  .flip-back.emoji-only .role-icon { width: auto; height: auto; margin: 0; padding: 0; background: transparent; box-shadow: none; font-size: clamp(3.6rem, 8vw, 5.2rem); animation: revealPop .45s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes revealPop { from { opacity: 0; transform: scale(.55) rotate(-12deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+
+  .closing-card { margin: 36px auto 20px; padding: clamp(25px, 5vw, 40px); text-align: center; max-width: 780px; }
+  .heart { display: inline-block; font-size: 2.3rem; animation: heartbeat 1.7s ease-in-out infinite; }
+  @keyframes heartbeat { 0%,100% { transform: scale(1); } 12% { transform: scale(1.16); } 24% { transform: scale(1); } 36% { transform: scale(1.1); } }
+  .closing-card h2 { font-size: clamp(1.45rem, 4vw, 2rem); margin: 10px 0; letter-spacing: -.03em; }
+  .closing-card p { color: var(--muted); max-width: 570px; margin: 0 auto; line-height: 1.75; }
+  .signature { color: #ce7897; font-weight: 800; margin-top: 18px !important; }
+  .footer { text-align: center; color: #b38d9d; font-size: .78rem; padding: 8px 0 30px; }
+  .sparkle { position: fixed; z-index: 0; pointer-events: none; color: #fff; text-shadow: 0 0 12px #f29db6; animation: sparkleFloat 6s ease-in-out infinite; opacity: .8; }
+  @keyframes sparkleFloat { 0%,100% { transform: translateY(0) rotate(0) scale(.8); opacity: .3; } 50% { transform: translateY(-25px) rotate(35deg) scale(1.2); opacity: 1; } }
+  .fade-out { animation: fadeAway .45s ease forwards; }
+  @keyframes fadeAway { to { opacity: 0; transform: scale(.96); } }
+  @media (max-width: 700px) {
+    .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .flip-card, .flip-inner { min-height: 220px; }
+    .flip-face { padding: 18px 12px; }
+  }
+  @media (max-width: 420px) {
+    .screen { padding: 18px 13px; }
+    .intro-card { border-radius: 24px; padding: 27px 20px; }
+    .actions { flex-direction: column; }
+    .actions .btn { width: 100%; }
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .flip-card, .flip-inner { min-height: 205px; }
+    .flip-face h3 { font-size: .92rem; }
+    .flip-face p { font-size: .82rem; }
+    .role-icon { width: 54px; height: 54px; font-size: 1.7rem; border-radius: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true">
+  <div class="orb one"></div><div class="orb two"></div><div class="orb three"></div>
+</div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<main class="screen" id="introScreen">
+  <section class="intro-card" id="introCard" aria-live="polite">
+    <span class="eyebrow">✦ A little something for you ✦</span>
+    <div class="gift-wrap" aria-hidden="true"><span class="gift">🎁</span></div>
+    <h1>You've Got a<br>Birthday Delivery!</h1>
+    <p class="subtitle">A special surprise for Vivian's Sweet 16</p>
+    <div class="actions">
+      <button class="btn btn-primary" id="openGift">Open Gift 🎁</button>
+      <button class="btn btn-soft" id="dontOpen">Don't Open 🙈</button>
+    </div>
+    <p class="tiny-note">Made with a little extra love and a lot of pink ♡</p>
+  </section>
+</main>
+
+<main id="birthday" aria-label="Vivian's birthday celebration">
+  <header class="hero">
+    <span class="eyebrow">Today is all about you ♡</span>
+    <h1>Happy Birthday<br><span class="name">Vivian</span>! 🎉</h1>
+    <span class="sweet-badge">Happy Sweet 16 ✨</span>
+    <p class="hero-note">Sixteen looks like a whole new chapter of laughter, memories, and lovely little moments.</p>
+  </header>
+
+  <section class="message-card">
+    <div class="quote-mark" aria-hidden="true">“</div>
+    <p>Love you so much, you're my favorite... 💗</p>
+  </section>
+
+  <section aria-labelledby="rolesTitle">
+    <div class="section-heading">
+      <h2 id="rolesTitle">Your official titles 🎀</h2>
+      <p>Sixteen is a level-up. Tap each card to reveal your badge.</p>
+    </div>
+    <div class="cards-grid">
+      <article class="flip-card" tabindex="0" role="button" aria-label="Roblox Partner. Tap to flip card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><div class="role-icon">🎮</div><h3>Roblox Partner</h3><p>Best gaming buddy</p><span class="tap-hint">Tap to reveal ↗</span></div>
+          <div class="flip-face flip-back emoji-only"><div class="role-icon">🏆</div></div>
+        </div>
+      </article>
+      <article class="flip-card" tabindex="0" role="button" aria-label="5 Hours Caller. Tap to flip card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><div class="role-icon">📞</div><h3>5 Hours Caller</h3><p>Late night talks & zero sleep</p><span class="tap-hint">Tap to reveal ↗</span></div>
+          <div class="flip-face flip-back emoji-only"><div class="role-icon">🌙</div></div>
+        </div>
+      </article>
+      <article class="flip-card" tabindex="0" role="button" aria-label="Rant Partner. Tap to flip card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><div class="role-icon">🗣️</div><h3>Rant Partner</h3><p>Always listening & keeping secrets</p><span class="tap-hint">Tap to reveal ↗</span></div>
+          <div class="flip-face flip-back emoji-only"><div class="role-icon">🤍</div></div>
+        </div>
+      </article>
+      <article class="flip-card" tabindex="0" role="button" aria-label="Igbo Teacher. Tap to flip card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><div class="role-icon">📚</div><h3>Igbo Teacher</h3><p>Patiently teaching the best phrases</p><span class="tap-hint">Tap to reveal ↗</span></div>
+          <div class="flip-face flip-back emoji-only"><div class="role-icon">📝</div></div>
+        </div>
+      </article>
+      <article class="flip-card" tabindex="0" role="button" aria-label="Bundle of Joy. Tap to flip card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><div class="role-icon">☀️</div><h3>Bundle of Joy</h3><p>Brightening up every day</p><span class="tap-hint">Tap to reveal ↗</span></div>
+          <div class="flip-face flip-back emoji-only"><div class="role-icon">🌷</div></div>
+        </div>
+      </article>
+      <article class="flip-card" tabindex="0" role="button" aria-label="Worst Known Laugh Ever. Tap to flip card" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="flip-face flip-front"><div class="role-icon">😂</div><h3>Worst Known Laugh Ever</h3><p>Uncontrollable chaos & purest energy</p><span class="tap-hint">Tap to reveal ↗</span></div>
+          <div class="flip-face flip-back emoji-only"><div class="role-icon">🤣</div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="closing-card">
+    <span class="heart" aria-hidden="true">💗</span>
+    <h2>Here's to your Sweet 16, Vivian</h2>
+    <p>I hope this year brings you the kind of happiness that stays, people who make you feel loved, and memories that you'll still laugh about years from now. Keep being your funny, caring, wonderfully you self. You deserve so many good things.</p>
+    <p class="signature">Happy birthday, always and forever ✨</p>
+  </section>
+  <footer class="footer">A tiny birthday corner made just for Vivian · Sweet 16 ♡</footer>
+</main>
+
+<script>
+(() => {
+  const introCard = document.getElementById('introCard');
+  const introScreen = document.getElementById('introScreen');
+  const birthday = document.getElementById('birthday');
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animationId = null;
+
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function burstConfetti() {
+    const colors = ['#f48fb1', '#ffd166', '#cdb4db', '#a8dadc', '#ffafcc', '#fff1b8', '#ffffff'];
+    const count = window.innerWidth < 600 ? 125 : 210;
+    particles = Array.from({ length: count }, () => ({
+      x: window.innerWidth * (0.25 + Math.random() * 0.5),
+      y: window.innerHeight * (0.25 + Math.random() * 0.25),
+      vx: (Math.random() - .5) * 13,
+      vy: -Math.random() * 11 - 3,
+      gravity: .13 + Math.random() * .11,
+      size: 4 + Math.random() * 7,
+      rotation: Math.random() * Math.PI,
+      spin: (Math.random() - .5) * .2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      ribbon: Math.random() > .55,
+      life: 1
+    }));
+    if (animationId) cancelAnimationFrame(animationId);
+    animateConfetti();
+  }
+
+  function animateConfetti() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    particles = particles.filter(p => p.life > 0 && p.y < window.innerHeight + 50);
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.vx *= .992;
+      p.rotation += p.spin; p.life -= .004;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.4));
+      ctx.fillStyle = p.color;
+      if (p.ribbon) {
+        ctx.fillRect(-p.size * .35, -p.size * 1.5, p.size * .7, p.size * 3.4);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * .55, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+    if (particles.length) animationId = requestAnimationFrame(animateConfetti);
+    else { ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); animationId = null; }
+  }
+
+  function addSparkles() {
+    const symbols = ['✦', '✧', '⋆', '♡', '✴'];
+    for (let i = 0; i < 18; i++) {
+      const s = document.createElement('span');
+      s.className = 'sparkle';
+      s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.top = Math.random() * 100 + 'vh';
+      s.style.fontSize = (12 + Math.random() * 18) + 'px';
+      s.style.animationDelay = (-Math.random() * 6) + 's';
+      s.style.animationDuration = (4 + Math.random() * 5) + 's';
+      document.body.appendChild(s);
+    }
+  }
+
+  function openBirthday() {
+    burstConfetti();
+    introCard.classList.add('fade-out');
+    window.setTimeout(() => {
+      introScreen.style.display = 'none';
+      birthday.classList.add('visible');
+      addSparkles();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 420);
+  }
+
+  document.getElementById('openGift').addEventListener('click', openBirthday);
+  document.getElementById('dontOpen').addEventListener('click', () => {
+    introCard.innerHTML = `
+      <span class="eyebrow">Wait a second… 🥺</span>
+      <div class="gift-wrap" aria-hidden="true"><span class="gift">🥹</span></div>
+      <h1>Aww please,<br>open it! 🥺</h1>
+      <p class="subtitle">The birthday magic is waiting for you. This little gift has been waiting all day!</p>
+      <div class="actions"><button class="btn btn-primary" id="okayOpen">Okay fine, open it! ✨</button></div>
+      <p class="tiny-note">The gift is shy, but it's full of love ♡</p>`;
+    document.getElementById('okayOpen').addEventListener('click', openBirthday);
+  });
+
+  document.querySelectorAll('.flip-card').forEach(card => {
+    function flip() {
+      const isFlipped = card.classList.toggle('flipped');
+      card.setAttribute('aria-pressed', String(isFlipped));
+    }
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        flip();
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
